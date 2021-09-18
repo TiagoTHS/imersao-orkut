@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from 'styled-components';
 import Box from '../Box';
 
@@ -51,3 +52,25 @@ export const ProfileRelationsBoxWrapper = styled(Box)`
     }
   }
 `;
+
+export function ProfileRelationsBox ({ title, content }) {
+  return (
+    <ProfileRelationsBoxWrapper>
+      <h2 className="smallTitle">
+        {title} ({content.length})
+      </h2>
+      <ul>
+        {content.map((itemAtual) => {
+          return (
+            <li key={itemAtual?.id}>
+              <a href={`/users/${itemAtual?.title}`}>
+                {<img src={itemAtual?.image} />}
+                <span>{itemAtual?.title}</span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </ProfileRelationsBoxWrapper>
+  );
+}

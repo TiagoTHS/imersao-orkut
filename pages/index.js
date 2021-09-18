@@ -1,49 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Box from '../src/components/Box';
 import MainGrid from '../src/components/MainGrid';
-import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
-import { AlurakutMenu, OrkutNostalgicIconSet, AlurakutProfileSidebarMenuDefault } from '../src/lib/AlurakutCommons';
-
-function ProfileSidebar(props) {
-  return (
-    <Box as="aside">
-      <img src={`https://github.com/${props.githubUser}.png`} alt="" />
-      <hr />
-      
-      <p>
-        <a className="boxLink" href={`https://github.com/${props.githubUser}`}>
-          @{props.githubUser}
-        </a>
-      </p>
-      <hr />
-
-      <AlurakutProfileSidebarMenuDefault />
-    </Box>
-  );
-}
-
-function ProfileRelationsBox ({ title, content }) {
-  return (
-    <ProfileRelationsBoxWrapper>
-      <h2 className="smallTitle">
-        {title} ({content.length})
-      </h2>
-      <ul>
-        {content.map((itemAtual) => {
-          return (
-            <li key={itemAtual?.id}>
-              <a href={`/users/${itemAtual?.title}`}>
-                {<img src={itemAtual?.image} />}
-                <span>{itemAtual?.title}</span>
-              </a>
-            </li>
-          );
-        })}
-      </ul>
-    </ProfileRelationsBoxWrapper>
-  );
-}
+import { ProfileRelationsBoxWrapper, ProfileRelationsBox } from '../src/components/ProfileRelations';
+import ProfileSidebar from '../src/components/ProfileSidebar';
+import { AlurakutMenu, OrkutNostalgicIconSet } from '../src/lib/AlurakutCommons';
 
 export default function Home() {
   const user = 'tiagoths';
@@ -53,6 +14,7 @@ export default function Home() {
     title: 'Eu odeio acordar cedo',
     image: 'https://alurakut.vercel.app/capa-comunidade-01.jpg'
   }]);
+  const [seguidores, setSeguidores] = useState([]);
   const pessoasFavoritas = [
     'juunegreiros',
     'omariosouto',
@@ -61,6 +23,17 @@ export default function Home() {
     'marcobrunodev',
     'felipefialho',
   ];
+
+  useEffect(() => {
+    fetch(`https://api.github.com/users/${user}/followers`)
+    .then((respostaDoServidor) => {
+      return respostaDoServidor.json();
+    })
+    .then((respostaCompleta) => {
+      console.log(respostaCompleta.length);
+      setSeguidores(respostaCompleta);
+    })
+  }, []);
 
   function handleCreateComunity(event) {
     event.preventDefault();
@@ -118,6 +91,8 @@ export default function Home() {
           </Box> 
         </div>
         <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>
+          <ProfileRelationsBox title="Seguidores" content={seguidores} />
+
           <ProfileRelationsBox title="Comunidades" content={comunidades} />
 
           <ProfileRelationsBoxWrapper>
